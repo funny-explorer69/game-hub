@@ -1,12 +1,14 @@
 import csv
 import pygame
 import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from game_files.screen import display
 
-class offline_menu:
+class offline_menu(display):
     def __init__(self):
-        pygame.init()
         self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((1280,720))
+        super().__init__()
         pygame.display.set_caption("offline menu")
     def start_offline_menu(self):
         a = pygame.Rect(440,40,400,200)
@@ -32,13 +34,13 @@ class offline_menu:
                     sys.exit()
                 if i.type == pygame.MOUSEBUTTONDOWN:
                     if a.collidepoint(pos):
-                        from bounce_ball import game1
+                        from game_files.offline_games.bounce_ball import game1
                         game_instance = game1()
                         return_boolean = True
                         while return_boolean:
                             return_boolean = game_instance.game_run()
                     elif b.collidepoint(pos):
-                        from minesweeper import game2
+                        from game_files.offline_games.minesweeper import game2
                         game_instance = game2()
                         return_boolean = True
                         while return_boolean:

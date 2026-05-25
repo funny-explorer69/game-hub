@@ -1,13 +1,15 @@
-import pygame 
+import pygame
 import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from game_files.screen import display
 
-class menu:
+class online_menu(display):
     def __init__(self):
-        pygame.init()
         self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((1280,720))
-        pygame.display.set_caption("mode selection menu")
-    def start_menu(self):
+        super().__init__()
+        pygame.display.set_caption("online menu")
+    def start_online_menu(self):
         a = pygame.Rect(440,40,400,200)
         b = pygame.Rect(440,260,400,200)
         c = pygame.Rect(440,480,400,200)
@@ -31,25 +33,10 @@ class menu:
                     sys.exit()
                 if i.type == pygame.MOUSEBUTTONDOWN:
                     if a.collidepoint(pos):
-                        from offline_menu import offline_menu 
-                        off = offline_menu()
-                        return_value = off.start_offline_menu()
-                        pygame.display.set_caption("mode selection menu")
+                        pass
                     elif b.collidepoint(pos):
-                        from online_menu import online_menu 
-                        on = online_menu()
-                        return_value = on.start_online_menu()
-                        pygame.display.set_caption("mode selection menu")
+                        pass
                     elif c.collidepoint(pos):
-                        pygame.quit()
-                        sys.exit()
+                        return False
             pygame.display.update()
             self.clock.tick(60)
-
-
-if __name__ == "__main__":                        
-    m= menu()
-    m.start_menu()
-
-        
-

@@ -3,11 +3,13 @@ import sys
 import numpy as np
 import math
 import time
-from game import menu
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from game_files.screen import display
 
-
-class game1(menu):
+class game1(display):
     def __init__(self):
+        super().__init__()
         self.bullets = np.empty((50,4),dtype=np.float32)
         self.bullets.fill(-1)
         self.obstacles = np.empty((10,5),dtype=np.float32)
@@ -25,6 +27,7 @@ class game1(menu):
         self.no_of_bullets = 0
         self.no_of_obstacles = 0
         self.obstacle_spawn_rate = 1/120
+        
 
     def shoot(self,mouse_pos):
         if self.no_of_bullets >= len(self.bullets):
@@ -118,8 +121,6 @@ class game1(menu):
             return True
         return False
     def game_run(self):
-        pygame.init()
-        screen = pygame.display.set_mode((1280,720))
         clock = pygame.time.Clock()
         while self.is_running:
             t = time.perf_counter_ns()
@@ -234,11 +235,11 @@ class game1(menu):
                     rect = pygame.Rect(0,0,1280,720)
                     overlay = pygame.Surface((rect.width,rect.height),pygame.SRCALPHA)
                     overlay.fill((0,0,0,120))
-                    screen.blit(overlay,rect)
+                    self.screen.blit(overlay,rect)
                     font = pygame.font.Font(None,150)
                     text = font.render("Game Over",True,(255,255,255))
                     text_rect = text.get_rect(center=rect.center)
-                    screen.blit(text,text_rect)
+                    self.screen.blit(text,text_rect)
                     pygame.display.update()
                     pygame.time.delay(3000)
                     while True:
@@ -247,10 +248,10 @@ class game1(menu):
                         rect2 = pygame.Rect(390,370,500,220)
                         color1 = (40,40,40) if rect1.collidepoint(mouse_pos) else (0,0,0)
                         color2 = (40,40,40) if rect2.collidepoint(mouse_pos) else (0,0,0)
-                        screen.fill((255,255,255))
+                        self.screen.fill((255,255,255))
 
-                        pygame.draw.rect(screen,color1,rect1,border_radius=20)
-                        pygame.draw.rect(screen,color2,rect2,border_radius=20)
+                        pygame.draw.rect(self.screen,color1,rect1,border_radius=20)
+                        pygame.draw.rect(self.screen,color2,rect2,border_radius=20)
 
                         text1 = font.render("Back",True,(255,255,255))
                         text2 = font.render("Try again",True,(255,255,255))
@@ -258,8 +259,8 @@ class game1(menu):
                         text_rect1 = text1.get_rect(center=rect1.center)
                         text_rect2 = text2.get_rect(center=rect2.center)
 
-                        screen.blit(text1,text_rect1)
-                        screen.blit(text2,text_rect2)
+                        self.screen.blit(text1,text_rect1)
+                        self.screen.blit(text2,text_rect2)
 
                         pygame.display.update()
                         for event in pygame.event.get():
@@ -288,9 +289,9 @@ class game1(menu):
 
             self.no_of_bullets = count
 
-            screen.fill((255,255,255))
-            pygame.draw.line(screen,(0,255,0),(0,610),(1280,610),2)
-            pygame.draw.circle(screen,(255,0,0),(int(self.player_pos[0]),int(self.player_pos[1])),10)
+            self.screen.fill((255,255,255))
+            pygame.draw.line(self.screen,(0,255,0),(0,610),(1280,610),2)
+            pygame.draw.circle(self.screen,(255,0,0),(int(self.player_pos[0]),int(self.player_pos[1])),10)
             mouse_pos = pygame.mouse.get_pos()
 
             dx = mouse_pos[0] - self.player_pos[0]
@@ -300,21 +301,19 @@ class game1(menu):
             if length != 0:
                 dx *= 20/length
                 dy *= 20/length
-                pygame.draw.line(screen,(0,0,0),(self.new_x + dx/2 , self.new_y + dy/2),(self.new_x + dx , self.new_y + dy) , 3)
+                pygame.draw.line(self.screen,(0,0,0),(self.new_x + dx/2 , self.new_y + dy/2),(self.new_x + dx , self.new_y + dy) , 3)
 
             for bullet in self.bullets:
                 if np.all(bullet == -1):
                     continue
-                pygame.draw.circle(screen,(0,0,0),(int(bullet[0]),int(bullet[1])),4)
+                pygame.draw.circle(self.screen,(0,0,0),(int(bullet[0]),int(bullet[1])),4)
 
             for obstacle in self.obstacles:
                 if np.all(obstacle == -1):
                     continue
-                pygame.draw.circle(screen,(255,0,0),(int(obstacle[0]),int(obstacle[1])),5)
+                pygame.draw.circle(self.screen,(255,0,0),(int(obstacle[0]),int(obstacle[1])),5)
 
             pygame.display.update()       
             clock.tick(60)
             
 
-g = game1()
-print(g.game_run())
