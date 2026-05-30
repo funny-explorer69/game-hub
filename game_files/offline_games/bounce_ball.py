@@ -27,7 +27,14 @@ class game1(display):
         self.no_of_bullets = 0
         self.no_of_obstacles = 0
         self.obstacle_spawn_rate = 1/120
-        
+        self.ground = 600
+        self.left = 0
+        self.right = 1280
+        self.ground_coll = 610
+        self.top = 0
+        self.acceleration = 3
+        self.max_speed = 20
+        self.jump_speed = 30
 
     def shoot(self,mouse_pos):
         if self.no_of_bullets >= len(self.bullets):
@@ -83,7 +90,7 @@ class game1(display):
         if np.all(obstacle == -1) or np.all(bullet == -1):
             return False
 
-        ox1,oy1 = obstacle[0],obstacle       [1]
+        ox1,oy1 = obstacle[0],obstacle[1]
 
         ox2 = ox1 + obstacle[2]
         oy2 = oy1 + obstacle[3]
@@ -109,7 +116,7 @@ class game1(display):
                 self.bullets[j] = -1
                 return True
             return False
-        t = -(rx1*dx + ry1*dy)/seg_len_sq
+        t = -(rx1*dx + ry1*dy) / seg_len_sq
         t = max(0,min(1,t))
 
         closest_x = rx1 + t*dx
@@ -120,6 +127,7 @@ class game1(display):
             self.bullets[j] = -1
             return True
         return False
+
     def game_run(self):
         clock = pygame.time.Clock()
         while self.is_running:
@@ -138,42 +146,42 @@ class game1(display):
             keys = pygame.key.get_pressed()
 
             if keys[pygame.K_a]:
-                self.speed_x -= 3
-                self.speed_x = max(self.speed_x,-20)
+                self.speed_x -= self.acceleration
+                self.speed_x = max(self.speed_x,-self.max_speed)
 
             if keys[pygame.K_d]:
-                self.speed_x += 3
-                self.speed_x = min(self.speed_x,20)
+                self.speed_x += self.acceleration
+                self.speed_x = min(self.speed_x,self.max_speed)
 
             if keys[pygame.K_SPACE]:
 
-                if self.player_pos[1] >= 600:
-                    self.speed_y = -30
+                if self.player_pos[1] >= self.ground:
+                    self.speed_y = -self.jump_speed
 
             if self.speed_x > 0:
-                self.speed_x -= self.acc_x
+                self.speed_x -= self.acc_x # this is friction
                 if self.speed_x < 0:
                     self.speed_x = 0
             elif self.speed_x < 0:
                 self.speed_x += self.acc_x
                 if self.speed_x > 0:
                     self.speed_x = 0
-            self.speed_y += self.acc_y
+            self.speed_y += self.acc_y # this is gravity
             self.old_player_pos = self.player_pos
 
             self.new_x = self.player_pos[0] + self.speed_x
             self.new_y = self.player_pos[1] + self.speed_y
 
-            if self.new_y >= 600:
-                self.new_y = 600
+            if self.new_y >= self.ground:
+                self.new_y = self.ground
                 self.speed_y *= -self.e
 
-            if self.new_x >= 1270:
-                self.new_x = 1270
+            if self.new_x >= self.right:
+                self.new_x = self.right
                 self.speed_x *= -self.e
 
-            elif self.new_x <= 10:
-                self.new_x = 10
+            elif self.new_x <= self.left:
+                self.new_x = self.left
                 self.speed_x *= -self.e
 
             self.player_pos = (self.new_x,self.new_y)
@@ -201,14 +209,14 @@ class game1(display):
                 if np.random.rand() <= self.obstacle_spawn_rate:
                     side = np.random.randint(0,3)
                     if side == 0:
-                        x = 0
-                        y = np.random.randint(0,600)
+                        x = self.left
+                        y = np.random.randint(self.top,self.ground)
                     elif side == 1:
-                        x = 1280
-                        y = np.random.randint(0,600)
+                        x = self.right
+                        y = np.random.randint(self.top,self.ground)
                     elif side == 2:
-                        x = np.random.randint(0,1280)
-                        y = 0
+                        x = np.random.randint(self.left,self.right)
+                        y = self.top
 
                     speed = 1 + 3 * (np.random.rand() ** 2)
                     self.obstacles[self.no_of_obstacles] = np.array([x,y,0,0,speed],dtype=np.float32)
@@ -222,7 +230,7 @@ class game1(display):
                 bullet[0] += bullet[2]
                 bullet[1] += bullet[3]
 
-                if not (10 <= bullet[0] <= 1270 and 10 <= bullet[1] <= 610):
+                if not (self.left <= bullet[0] <= self.right and self.top <= bullet[1] <= self.ground_coll):
                     self.bullets[idx] = -1
                     continue
 
@@ -290,7 +298,7 @@ class game1(display):
             self.no_of_bullets = count
 
             self.screen.fill((255,255,255))
-            pygame.draw.line(self.screen,(0,255,0),(0,610),(1280,610),2)
+            pygame.draw.line(self.screen,(0,255,0),(0,self.ground_coll),(1280,self.ground_coll),2)
             pygame.draw.circle(self.screen,(255,0,0),(int(self.player_pos[0]),int(self.player_pos[1])),10)
             mouse_pos = pygame.mouse.get_pos()
 

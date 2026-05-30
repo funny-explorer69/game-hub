@@ -19,7 +19,7 @@ class game2(display):
         self.pictures = []
         for i in range(9):
             self.pictures.append(pygame.image.load(f"{self.pth}/pictures/minesweeper/{i}.png"))
-        
+
         
     def game_run(self):
         while self.is_running:
@@ -55,7 +55,7 @@ class game2(display):
                         for nj in [-1,0,1]:
                             if ni == 0 and nj == 0:
                                 continue
-                            if i+ni < 0 or j+nj < 0 or i+ni > 19 or j+nj > 29:
+                            if i+ni < 0 or j+nj < 0 or i+ni > 19 or j+nj > 29: # xhwcking the entire board
                                 continue
                             if self.is_revealed[i+ni,j+nj] == True:
                                 continue
