@@ -35,15 +35,15 @@ class offline_menu(display):
                 if i.type == pygame.MOUSEBUTTONDOWN:
                     if a.collidepoint(pos):
                         from game_files.offline_games.bounce_ball import game1
-                        game_instance = game1()
                         return_boolean = True
                         while return_boolean:
+                            game_instance = game1()
                             return_boolean = game_instance.game_run()
                     elif b.collidepoint(pos):
                         from game_files.offline_games.minesweeper import game2
-                        game_instance = game2()
                         return_boolean = True
                         while return_boolean:
+                            game_instance = game2()
                             return_boolean = game_instance.game_run()
                     elif c.collidepoint(pos):
                         return False
