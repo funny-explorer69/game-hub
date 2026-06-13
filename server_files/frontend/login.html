@@ -4,17 +4,22 @@
     <title>user login page</title>
 </head>
 <body>
-    <form>
+    <form id+="login_form">
         <label>username:</label>
         <input type="text" name = "username" id = "username">
         <br>
         <label>password:</label>
         <input type="password" name = "password" id ="password">
         <br>
+        <button type="submit">Send Request</button>
     </form>
-    <button onclick="test()">Send Request</button>
+    
+    <br>
+    <a href="forgot_password">forgot password</a>
 
     <script>
+        document.getElementById("login_form").addEventListener("submit",test())
+
         function login_correct(username,password){
             // if too long or contains special char other than _ give error 1
             if (! /^[a-zA-Z0-9_]+$/.test(username) || username.length > 16){

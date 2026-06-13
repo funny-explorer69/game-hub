@@ -2,11 +2,15 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from pathlib import Path
 import sys
+from pydantic import BaseModel
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(BASE_DIR)
 app = FastAPI()
-import server_files.backend.db 
+from server_files.backend.db import check_user 
+
+class user(BaseModel):
+    username :str
 
 @app.get("/")
 def get():
@@ -19,9 +23,13 @@ def click(username,password):
         return {"response":"logged in successfully"}
     return {"response":"incorrect username or password"}
 
-@app.post("/forgot_password/{username}")
-def change_password(username):
-    if check_user(username):
+@app.get("/forgot_password")
+def get():
+    return FileResponse(BASE_DIR/"frontend/forgot_password.html")
+
+@app.post("/forgot_password")
+def change_password(User:user):
+    if check_user(User.username):
         #process to send email
         print("well done")
         pass
