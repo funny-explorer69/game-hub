@@ -15,10 +15,7 @@
     <button onclick="test()">Send Request</button>
 
     <script>
-        function login_correct(){
-            var username;
-            username = document.getElementById("username").value;
-            password = document.getElementById("password").value;
+        function login_correct(username,password){
             // if too long or contains special char other than _ give error 1
             if (! /^[a-zA-Z0-9_]+$/.test(username) || username.length > 16){
                 console.log("h")
@@ -43,10 +40,19 @@
         }
 
         async function test() {
-            var allow = login_correct()
+            username = document.getElementById("username").value;
+            password = document.getElementById("password").value;
+            var allow = login_correct(username,password)
             if(allow ==0){
-                const response = await fetch(
-                    "http://127.0.0.1:8000/click"
+                const response = await fetch( //should change here to make it into parameterised one with username and password
+                    "http://127.0.0.1:8000/click",
+                    {
+                        method : "POST", // by default its get method
+                        headers :{
+                            "Content-Type" : "application/json"
+                        },
+                        body : JSON.stringify({"username":username,"password":password})
+                    }
                 );
 
                 const data = await response.json();

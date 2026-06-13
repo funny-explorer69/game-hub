@@ -10,11 +10,11 @@ from game_files.screen import display
 class game1(display):
     def __init__(self):
         super().__init__()
-        self.bullets = np.empty((50,4),dtype=np.float32)
+        self.bullets = np.empty((10,4),dtype=np.float32)# if there is no bullet all stats are -1
         self.bullets.fill(-1)
-        self.obstacles = np.empty((10,5),dtype=np.float32)
+        self.obstacles = np.empty((10,5),dtype=np.float32)# if any index is supposed to point to empty then all -1
         self.obstacles.fill(-1)
-        self.is_running = True
+        self.is_running = True 
         self.player_pos = (640.0,600.0)
         self.old_player_pos = self.player_pos
         self.new_x = 640.0
@@ -35,6 +35,8 @@ class game1(display):
         self.acceleration = 3
         self.max_speed = 20
         self.jump_speed = 30
+        self.minimum_speed = 2
+        self.extra_speed_range = 5
 
     def shoot(self,mouse_pos):
         if self.no_of_bullets >= len(self.bullets):
@@ -190,8 +192,8 @@ class game1(display):
                 if np.all(obstacle == -1):
                     continue
                 ox,oy = obstacle[0],obstacle[1]
-                future_x = self.player_pos[0] + self.speed_x*3
-                future_y = self.player_pos[1] + self.speed_y*3
+                future_x = self.player_pos[0] + self.speed_x 
+                future_y = self.player_pos[1] + self.speed_y 
 
                 dx = future_x - ox
                 dy = future_y - oy
@@ -218,7 +220,7 @@ class game1(display):
                         x = np.random.randint(self.left,self.right)
                         y = self.top
 
-                    speed = 1 + 3 * (np.random.rand() ** 2)
+                    speed = self.minimum_speed + self.extra_speed_range * (np.random.rand() ** 2)
                     self.obstacles[self.no_of_obstacles] = np.array([x,y,0,0,speed],dtype=np.float32)
                     self.no_of_obstacles += 1
 
