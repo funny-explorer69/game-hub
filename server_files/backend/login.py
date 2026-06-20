@@ -31,7 +31,7 @@ def get():
 def change_password(User:user):
     if check_user(User.username):
         #process to send email
-        print("well done")
+        print(user.usrename)
         pass
     return {"response":"if email exists a recovery mail has been sent"}
     
